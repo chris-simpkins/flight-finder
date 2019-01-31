@@ -1,10 +1,13 @@
+require('dotenv').config();
 let unirest =  require('unirest');
 
-var resultsLocation;
-var sessionKey;
+//var resultsLocation;
+//var sessionKey;
+
+var pricingOptionsArray = [];
 
 let month = 2,
-    length = 24,
+    length = 26,
     endDate,
     startDate,
     monthMax,
@@ -20,10 +23,12 @@ if(month = 2) {
   monthMax = 31;
 }
 
+//console.log(process.env.API_KEY);
+
 function createSession (month, outbound, inbound){
   unirest
     .post("https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/pricing/v1.0")
-    .header("X-RapidAPI-Key", `${process.env.API_KEY}`)
+    .header("X-RapidAPI-Key", process.env.API_KEY)
     .header("Content-Type", "application/x-www-form-urlencoded")
     .send("originPlace=LGW-sky")
     .send("destinationPlace=MCO-sky")
@@ -40,9 +45,9 @@ function createSession (month, outbound, inbound){
     .send("locale=en-US")
     .send("adults=1")
     .end(function (result) {
-      // console.log("status: "+result.status);
-      resultsLocation = result.headers.location;
-      sessionKey = (resultsLocation.split('/')).pop();      
+      console.log("status: "+result.status);
+      let resultsLocation = result.headers.location;
+      let sessionKey = (resultsLocation.split('/')).pop();      
 
       //include carriers includeCarriers=VS%3BDL%3BUA%3BLH%3BAA%3BBA
       //stops &stops=0
@@ -57,12 +62,34 @@ function createSession (month, outbound, inbound){
         .end(function (result) {
           // console.log("Dates: "+month + "/" + outbound + " - " + month + "/" + inbound);
           // console.log("cheapest price: ");
-          console.log(result.body.Itineraries);
-          let itineraryArray = result.body.Itineraries;
-          for(i=0;i<itineraryArray.length();i++){
-             for(i=0;i<)
+          //console.log(result.body.Itineraries);
+          var itineraryArray = result.body.Itineraries;
+          //console.log(itineraryArray);
+          var pricingOptionsArray = [];
+          for(i=0;i<itineraryArray.length;i++){
+            pricingOptionsArray[i] = itineraryArray[i].PricingOptions;
+            // for(i=0;i<pricingOptionsArray.length;i++){
+            //   //console.log(pricingOptionsArray[i]);
+            //   var priceOptions = pricingOptionsArray.flat();
+            //   console.log(priceOptions);
+            // }
           }
+
+          console.log("1:         " + pricingOptionsArray[0]);
           console.log(" ");
+          console.log(" ");
+          console.log("2:      "+ pricingOptionsArray[1]);
+
+          var newArray = [].concat.apply([], pricingOptionsArray);
+          //console.log(newArray);
+          console.log("3:   " + newArray);
+          console.log(newArray[0]);
+          console.log(newArray[1]);
+          console.log(" ");
+          console.log(" ");
+          //new array is array of all agents with their price
+          //go through new array and filter out agents
+          //go through new filtered array and find cheapest price
         });
     });
 }
@@ -92,6 +119,7 @@ for(startDate=1; startDate <= (monthMax-length); startDate++){
   }
 
   createSession(newMonth, newStart, newEnd);
+
 
 }
 
