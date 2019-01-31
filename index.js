@@ -1,11 +1,6 @@
 require('dotenv').config();
 let unirest =  require('unirest');
 
-//var resultsLocation;
-//var sessionKey;
-
-var pricingOptionsArray = [];
-
 let month = 2,
     length = 26,
     endDate,
@@ -15,6 +10,9 @@ let month = 2,
     newStart,
     newEnd;
 
+var newArray = [];
+var pricingOptionsArray = [];
+
 if(month = 2) {
   monthMax = 28;
 } else if(month=4,6,9,11) {
@@ -22,8 +20,6 @@ if(month = 2) {
 } else {
   monthMax = 31;
 }
-
-console.log(process.env.API_KEY);
 
 function createSession (month, outbound, inbound){
   unirest
@@ -34,6 +30,8 @@ function createSession (month, outbound, inbound){
     .send("destinationPlace=MCO-sky")
     .send(`outboundDate=2019-${month}-${outbound}`)
     .send(`inboundDate=2019-${month}-${inbound}`)
+    //.send(`outboundDate=2019-02-10`)
+    //.send(`inboundDate=2019-02-20`)
     .send("cabinClass=economy")
     .send("children=0")
     .send("infants=0")
@@ -45,52 +43,53 @@ function createSession (month, outbound, inbound){
     .send("locale=en-US")
     .send("adults=1")
     .end(function (result) {
-      console.log("status: "+result.status);
-      let resultsLocation = result.headers.location;
-      let sessionKey = (resultsLocation.split('/')).pop();      
-
-      //include carriers includeCarriers=VS%3BDL%3BUA%3BLH%3BAA%3BBA
-      //stops &stops=0
-      //sortOrder sortOrder=asc
-      //sortType sortType=price
-      //origin originAirports=MCO
-      //destination destinationAirports=LHR
-
-      unirest
-        .get(`https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/pricing/uk2/v1.0/${sessionKey}?stops=0&sortOrder=asc&sortType=price&includeCarriers=VS&originAirports=LGW&destinationAirports=MCO&pageIndex=0&pageSize=10`)
-        .header("X-RapidAPI-Key", `${process.env.API_KEY}`)
-        .end(function (result) {
-          console.log("Dates: "+month + "/" + outbound + " - " + month + "/" + inbound);
-          var itineraryArray = result.body.Itineraries;
-          for(i=0;i<itineraryArray.length;i++){
-            pricingOptionsArray.push(itineraryArray[i].PricingOptions);
-          }
-          console.log("1:         " )
-          console.log(pricingOptionsArray);
-          console.log(" ");
-          console.log("2:      "+ pricingOptionsArray[1]);
-          console.log(" ");
-
-          //var newArray = [].concat.apply([], pricingOptionsArray);
-          //console.log(newArray);
-          // console.log("3:   " + newArray);
-          // console.log(" ");
-          //new array is array of all agents with their price
-          //go through new array and filter out agents
-          //go through new filtered array and find cheapest price
-        });
+      if(result.status === 201){
+        let sessionKey = ((result.headers.location).split('/')).pop();
+        retreiveResults(sessionKey);
+      } else {
+        console.log("Error: "+result.status)
+      }
     });
 }
 
-// function response() {
+function retreiveResults(sessionKey){
+  //include carriers includeCarriers=VS%3BDL%3BUA%3BLH%3BAA%3BBA
+  //stops &stops=0
+  //sortOrder sortOrder=asc
+  //sortType sortType=price
+  //origin originAirports=MCO
+  //destination destinationAirports=LHR
 
-//   unirest.get(`https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/pricing/uk2/v1.0/${sessionKey}?pageIndex=0&pageSize=10`)
-//   .header("X-RapidAPI-Key", `${process.env.API_KEY}`)
-//   .end(function (result) {
-//     console.log(result.status, result.headers, result.body);
-//   });
+  unirest
+    .get(`https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/pricing/uk2/v1.0/${sessionKey}?stops=0&sortOrder=asc&sortType=price&includeCarriers=VS&originAirports=LGW&destinationAirports=MCO&pageIndex=0&pageSize=10`)
+    .header("X-RapidAPI-Key", `${process.env.API_KEY}`)
+    .end(function (result) {
+      if(result.status === 200){
+        itineraryArray = result.body.Itineraries;
+        console.log(result.body.Query.InboundDate);
+        console.log(result.body.Query.OutboundDate);
+        for(i=0;i<itineraryArray.length;i++){
+          pricingOptionsArray.push(itineraryArray[i].PricingOptions);
+        }
+        console.log("itinierarys: "+pricingOptionsArray.length);
+      }else{
+        console.log("Error: "+result.status);
+      }
+    });
+}
 
-// }
+function flattenOptions() {
+  newArray = [].concat.apply([], pricingOptionsArray);
+  console.log(newArray.length);
+}
+
+//var newArray = [].concat.apply([], pricingOptionsArray);
+//console.log(newArray);
+// console.log("3:   " + newArray);
+// console.log(" ");
+//new array is array of all agents with their price
+//go through new array and filter out agents
+//go through new filtered array and find cheapest price
 
 for(startDate=1; startDate <= (monthMax-length); startDate++){
   endDate = startDate + length;
@@ -107,8 +106,6 @@ for(startDate=1; startDate <= (monthMax-length); startDate++){
   }
 
   createSession(newMonth, newStart, newEnd);
-
-
 }
 
-//response();
+flattenOptions();
