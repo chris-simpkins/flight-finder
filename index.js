@@ -23,7 +23,7 @@ if(month = 2) {
   monthMax = 31;
 }
 
-//console.log(process.env.API_KEY);
+console.log(process.env.API_KEY);
 
 function createSession (month, outbound, inbound){
   unirest
@@ -60,33 +60,21 @@ function createSession (month, outbound, inbound){
         .get(`https://skyscanner-skyscanner-flight-search-v1.p.rapidapi.com/apiservices/pricing/uk2/v1.0/${sessionKey}?stops=0&sortOrder=asc&sortType=price&includeCarriers=VS&originAirports=LGW&destinationAirports=MCO&pageIndex=0&pageSize=10`)
         .header("X-RapidAPI-Key", `${process.env.API_KEY}`)
         .end(function (result) {
-          // console.log("Dates: "+month + "/" + outbound + " - " + month + "/" + inbound);
-          // console.log("cheapest price: ");
-          //console.log(result.body.Itineraries);
+          console.log("Dates: "+month + "/" + outbound + " - " + month + "/" + inbound);
           var itineraryArray = result.body.Itineraries;
-          //console.log(itineraryArray);
-          var pricingOptionsArray = [];
           for(i=0;i<itineraryArray.length;i++){
-            pricingOptionsArray[i] = itineraryArray[i].PricingOptions;
-            // for(i=0;i<pricingOptionsArray.length;i++){
-            //   //console.log(pricingOptionsArray[i]);
-            //   var priceOptions = pricingOptionsArray.flat();
-            //   console.log(priceOptions);
-            // }
+            pricingOptionsArray.push(itineraryArray[i].PricingOptions);
           }
-
-          console.log("1:         " + pricingOptionsArray[0]);
-          console.log(" ");
+          console.log("1:         " )
+          console.log(pricingOptionsArray);
           console.log(" ");
           console.log("2:      "+ pricingOptionsArray[1]);
+          console.log(" ");
 
-          var newArray = [].concat.apply([], pricingOptionsArray);
+          //var newArray = [].concat.apply([], pricingOptionsArray);
           //console.log(newArray);
-          console.log("3:   " + newArray);
-          console.log(newArray[0]);
-          console.log(newArray[1]);
-          console.log(" ");
-          console.log(" ");
+          // console.log("3:   " + newArray);
+          // console.log(" ");
           //new array is array of all agents with their price
           //go through new array and filter out agents
           //go through new filtered array and find cheapest price
