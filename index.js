@@ -4,11 +4,13 @@ let unirest =  require('unirest');
 let month = 2,
     length = 26,
     endDate,
-    startDate,
+    startDate =1,
     monthMax,
     newMonth,
     newStart,
-    newEnd;
+    newEnd,
+    flag = true,
+    done = false;
 
 var newArray = [];
 var pricingOptionsArray = [];
@@ -71,6 +73,7 @@ function retreiveResults(sessionKey){
         for(i=0;i<itineraryArray.length;i++){
           pricingOptionsArray.push(itineraryArray[i].PricingOptions);
         }
+        flag = true;
         console.log("itinierarys: "+pricingOptionsArray.length);
       }else{
         console.log("Error: "+result.status);
@@ -91,21 +94,40 @@ function flattenOptions() {
 //go through new array and filter out agents
 //go through new filtered array and find cheapest price
 
-for(startDate=1; startDate <= (monthMax-length); startDate++){
-  endDate = startDate + length;
-  newMonth = "0"+month.toString();
-  if(startDate < 10){
-    newStart = "0"+startDate.toString();
-  }else{
-    newStart = startDate.toString();
-  }
-  if(endDate < 10){
-    newEnd = "0"+endDate.toString();
-  }else{
-    newEnd = endDate.toString();
+
+// for(startDate=1; startDate <= (monthMax-length); startDate++){
+//   flag = false;
+  
+
+//   while(flag===false){};
+// }
+
+do{
+  if(flag === true) {
+    console.log("in here");
+    flag = false;
+    endDate = startDate + length;
+    newMonth = "0"+month.toString();
+    if(startDate < 10){
+      newStart = "0"+startDate.toString();
+    }else{
+      newStart = startDate.toString();
+    }
+    if(endDate < 10){
+      newEnd = "0"+endDate.toString();
+    }else{
+      newEnd = endDate.toString();
+    }
+
+    createSession(newMonth, newStart, newEnd);
+
+    startDate++;
   }
 
-  createSession(newMonth, newStart, newEnd);
-}
+  if(startDate > (monthMax-length)){
+    done = true;
+  }
+}while(!done);
 
-flattenOptions();
+//self recursing
+//flattenOptions();
