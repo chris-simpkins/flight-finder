@@ -1,27 +1,23 @@
 require('dotenv').config();
 let unirest =  require('unirest');
+let   agents = require('./agents.js');
 
-let month = 2,
-    length = 26,
+let month = 3,
+    length = 27,
     endDate,
     startDate =1,
-    monthMax,
-    newMonth,
-    newStart,
-    newEnd,
-    flag = true,
-    done = false;
+    monthMax=31;
 
-var newArray = [];
+var priceList = [];
 var pricingOptionsArray = [];
 
-if(month = 2) {
-  monthMax = 28;
-} else if(month=4,6,9,11) {
-  monthMax = 30;
-} else {
-  monthMax = 31;
-}
+// if(month = 2) {
+//   monthMax = 28;
+// } else if(month=4,6,9,11) {
+//   monthMax = 30;
+// } else {
+//   monthMax = 31;
+// }
 
 function createSession (month, outbound, inbound){
   unirest
@@ -49,7 +45,8 @@ function createSession (month, outbound, inbound){
         let sessionKey = ((result.headers.location).split('/')).pop();
         retreiveResults(sessionKey);
       } else {
-        console.log("Error: "+result.status)
+        console.log("POST Error: "+result.status);
+        process.exit();
       }
     });
 }
@@ -73,17 +70,33 @@ function retreiveResults(sessionKey){
         for(i=0;i<itineraryArray.length;i++){
           pricingOptionsArray.push(itineraryArray[i].PricingOptions);
         }
-        flag = true;
+        startDate++;
+        main();
         console.log("itinierarys: "+pricingOptionsArray.length);
       }else{
-        console.log("Error: "+result.status);
+        console.log("GET Error: "+result.status);
+        process.exit();
       }
     });
 }
 
 function flattenOptions() {
-  newArray = [].concat.apply([], pricingOptionsArray);
-  console.log(newArray.length);
+  priceList = [].concat.apply([], pricingOptionsArray);
+  filterOptions();
+}
+
+function filterOptions() {
+  priceList.forEach(function(option, index, object) {
+    let priceIndex = index;
+      (agents.excludeAgents).forEach(function(agent){
+        if(option.Agents[0] = agent.Id){
+          priceList.splice(priceIndex, 1);
+        }
+    });
+  });
+  for(i=0;i<=priceList.length;i++){
+  console.log(priceList[i].agents);
+  }
 }
 
 //var newArray = [].concat.apply([], pricingOptionsArray);
@@ -95,17 +108,12 @@ function flattenOptions() {
 //go through new filtered array and find cheapest price
 
 
-// for(startDate=1; startDate <= (monthMax-length); startDate++){
-//   flag = false;
-  
-
-//   while(flag===false){};
-// }
-
-do{
-  if(flag === true) {
-    console.log("in here");
-    flag = false;
+function main() {
+  if(startDate > (monthMax-length)){
+    console.log("Completed main");
+    flattenOptions();
+  }else{
+    console.log(startDate);
     endDate = startDate + length;
     newMonth = "0"+month.toString();
     if(startDate < 10){
@@ -121,13 +129,7 @@ do{
 
     createSession(newMonth, newStart, newEnd);
 
-    startDate++;
   }
+}
 
-  if(startDate > (monthMax-length)){
-    done = true;
-  }
-}while(!done);
-
-//self recursing
-//flattenOptions();
+main();
