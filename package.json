@@ -1,0 +1,7 @@
+{
+    "name": "flight-finder",
+    "dependencies": {
+        "dotenv": "^6.2.0",
+        "unirest": "^0.5.1"
+    }
+}
