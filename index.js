@@ -1,13 +1,25 @@
 require('dotenv').config();
-let unirest =  require('unirest');
-let agents = require('./agents.js');
+const unirest =  require('unirest');
+const MongoClient = require('mongodb').MongoClient;
+const url = "mongodb://localhost:27017/";
 
+var agents = require('./agents.js');
 var date = new Date();
 
+// MongoClient.connect(url, function(err, db){
+//   if(err) throw err;
+//   var dbo = db.db("firstTestDb");
+//   var myobj = [{_id: 1, name: '...'},{}];
+//   dbo.collection('flights').insertMany(myobj, function(err, res) {
+//     if(err) throw err;
+//     db.close();
+//   })
+// })
+
 let month = 9,
-    length = 7,
+    length = 28,
     endDate,
-    startDate =1,
+    startDate = 1,
     year=date.getYear();
     
 let monthMax = new Date(year, month, 0).getDate();
