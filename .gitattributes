@@ -1,1 +1,2 @@
-.env    eol=lf
+.gitattributes !filter !diff
+credentials.json filter=git-crypt diff=git-crypt
