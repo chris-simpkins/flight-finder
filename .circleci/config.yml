@@ -1,0 +1,21 @@
+version: "2.1"
+
+jobs:
+  build:
+    resource_class: small
+    docker:
+      - image: node:16.15.0-alpine
+    steps:
+      - checkout
+      - run: apk add git-crypt
+      - run: echo $GIT_CRYPT_KEY | base64 -d > flightfinder.key
+      - run: git-crypt unlock flightfinder.key
+      - run: npm i
+      - run: npm run build
+      - run: npm run start
+
+workflows:
+  build:
+    jobs:
+      - build:
+          context: flight-finder
