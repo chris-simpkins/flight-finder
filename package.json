@@ -1,10 +1,36 @@
 {
-    "name": "flight-finder",
-    "dependencies": {
-        "dotenv": "^6.2.0",
-        "express": "^4.17.1",
-        "mongodb": "^3.2.6",
-        "mongoose": "^5.5.11",
-        "unirest": "^0.5.1"
-    }
+  "name": "flight-finder",
+  "version": "0.0.1",
+  "description": "Find cheap flights",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "node dist/index.js",
+    "build": "tsc --project tsconfig.json",
+    "lint": "eslint ./src/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chris-simpkins/flight-finder.git"
+  },
+  "author": "Chris Simpkins",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chris-simpkins/flight-finder/issues"
+  },
+  "homepage": "https://github.com/chris-simpkins/flight-finder#readme",
+  "dependencies": {
+    "axios": "0.27.2"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.31",
+    "@typescript-eslint/eslint-plugin": "^5.22.0",
+    "@typescript-eslint/parser": "^5.22.0",
+    "date-fns": "^2.28.0",
+    "eslint": "^8.14.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "prettier": "^2.6.2",
+    "typescript": "^4.6.4"
+  }
 }
