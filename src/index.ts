@@ -1,5 +1,5 @@
 import axios from "axios";
-import * as credentials from "../credentials.json";
+import credentials from "../credentials.json" assert { type: "json" };
 
 const defaultCurrency = "GBP";
 
