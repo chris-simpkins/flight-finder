@@ -5,9 +5,10 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "start": "node dist/src/index.js",
+    "start": "node dist/src/rapidapi.js",
     "build": "tsc --project tsconfig.json",
-    "lint": "eslint ./src/*"
+    "lint": "eslint ./src/*",
+    "scraper": "node dist/src/scraper.js"
   },
   "repository": {
     "type": "git",
@@ -20,7 +21,9 @@
   },
   "homepage": "https://github.com/chris-simpkins/flight-finder#readme",
   "dependencies": {
-    "axios": "0.27.2"
+    "axios": "0.27.2",
+    "moment": "^2.29.3",
+    "puppeteer": "^13.7.0"
   },
   "devDependencies": {
     "@types/node": "^17.0.31",
