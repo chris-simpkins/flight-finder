@@ -56,6 +56,7 @@ const searchForFlights = async (startDate: any, endDate: any) => {
   await page.waitForTimeout(5000);
   await clickElementWithText("button span", "Stops");
   await page.waitForTimeout(2000);
+  await clickElementWithText("label", "Nonstop only");
   await page.waitForTimeout(5000);
   await getFlightDetails();
   await browser.close();
