@@ -12,7 +12,7 @@ Base framework for scraping flight prices from internet.
 1. Run `npm install`
 1. Run `npm run build`
 
-## Running
+## Running
 
 1. Run `npm run scraper`
 
