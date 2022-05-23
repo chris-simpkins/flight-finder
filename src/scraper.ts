@@ -40,6 +40,23 @@ const searchForFlights = async (startDate: any, endDate: any) => {
     return details;
   };
 
+  const parseDetails = async (details: any) => {
+    const regex =
+      /(?:From)\s(?<Price>\d+).*(?:with )(?<Airline>\D*)\.\s(?:Leaves )(?<Departure>\D*)\sat\s(?<DepartureTime>\d\d?:?\d?\d?\s((AM)|(PM))).*,\s(?<DepartureDate>\w*\s\d\d?).*arrives\sat\s(?<Arrival>\D*)\sat\s(?<ArrivalTime>\d\d?:?\d?\d?\s((AM)|(PM))).*,\s(?<ArrivalDate>\w*\s\d\d?)\D*(?<TotalDuration>(\d\d?(?:\d|\s)|((min)|(hr\s?)))+)(?:.*Layover\D*\(\d of (?<Layovers>\d\d*)\)\D*(?<LayoverDuration>(\d\d?(?:\d|\s)|((min)|(hr\s?)))+).*at\s(?<LayoverAirport>\D*)\.)?/gm;
+
+    let flightInfo;
+    details.forEach((flight: any) => {
+      while ((flightInfo = regex.exec(flight)) !== null) {
+        // This is necessary to avoid infinite loops with zero-width matches
+        if (flightInfo.index === regex.lastIndex) {
+          regex.lastIndex++;
+        }
+
+        console.log(flightInfo.groups);
+      }
+    });
+  };
+
   await page.goto("https://www.google.com/travel/flights/search");
   await page.waitForSelector('[aria-placeholder="Where from?"] input');
   await clearField('[aria-placeholder="Where from?"] input');
@@ -54,11 +71,12 @@ const searchForFlights = async (startDate: any, endDate: any) => {
   await enterText('input[aria-label="Return"]', endDate);
   await clickElementWithText("span", "Search");
   await page.waitForTimeout(5000);
-  await clickElementWithText("button span", "Stops");
-  await page.waitForTimeout(2000);
-  await clickElementWithText("label", "Nonstop only");
-  await page.waitForTimeout(5000);
-  await getFlightDetails();
+  // await clickElementWithText("button span", "Stops");
+  // await page.waitForTimeout(2000);
+  // await clickElementWithText("label", "Nonstop only");
+  // await page.waitForTimeout(5000);
+  const flightDetails = await getFlightDetails();
+  await parseDetails(flightDetails);
   await browser.close();
 };
 
