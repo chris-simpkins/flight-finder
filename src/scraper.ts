@@ -42,17 +42,17 @@ const searchForFlights = async (startDate: any, endDate: any) => {
 
   const parseDetails = async (details: any) => {
     const regex =
-      /(?:From)\s(?<Price>\d+).*(?:with )(?<Airline>\D*)\.\s(?:Leaves )(?<Departure>\D*)\sat\s(?<DepartureTime>\d\d?:?\d?\d?\s((AM)|(PM))).*,\s(?<DepartureDate>\w*\s\d\d?).*arrives\sat\s(?<Arrival>\D*)\sat\s(?<ArrivalTime>\d\d?:?\d?\d?\s((AM)|(PM))).*,\s(?<ArrivalDate>\w*\s\d\d?)\D*(?<TotalDuration>(\d\d?(?:\d|\s)|((min)|(hr\s?)))+)(?:.*Layover\D*\(\d of (?<Layovers>\d\d*)\)\D*(?<LayoverDuration>(\d\d?(?:\d|\s)|((min)|(hr\s?)))+).*at\s(?<LayoverAirport>\D*)\.)?/gm;
+      /(?:From\s(?<Price>\d*)\s(?<Currency>\D*)\sround)\D*(?:(?<Layovers>\d)\sstops?)?\D*(?:with\s(?<Airline>\D*)\.)\s*(?:Leaves\s+(?<Departure>\D*)\sat\s(?<DepartureTime>\d\d?:?\d?\d?\s(?:(?:AM)|(?:PM)))\D*,\s(?<DepartureDate>\D*\d\d?)).*(?:arrives\sat\s(?<Arrival>\D*)\sat\s(?<ArrivalTime>\d\d?:?\d?\d?\s(?:(?:AM)|(?:PM)))\D*,\s(?<ArrivalDate>\D*\d\d?)).\s*(?:Total\sduration\s(?<TotalDuration>(?:\d\d?(?:\d|\s)|(?:(?:min)|(?:hr\s?)))+)).\s*(?:(?:Layover\s*\(\d+\sof\s\d+\)\s\D*(?<Layover1Duration>(?:\d\d?(?:\d|\s)|(?:(?:min\s?)|(?:hr\s?)))+))\s*\s(?:overnight\s*)?(?:layover\sat\s(?<Layover1Airport>\D*)\.))?\s*(?:(?:Layover\s*\(\d+\sof\s\d+\)\s\D*(?<Layover2Duration>(?:\d\d?(?:\d|\s)|(?:(?:min\s?)|(?:hr\s?)))+))\s*\s(?:overnight\s*)?(?:layover\sat\s(?<Layover2Airport>\D*)\.))?/gm;
 
     let flightInfo;
-    details.forEach((flight: any) => {
+    details.forEach(async (flight: any) => {
       while ((flightInfo = regex.exec(flight)) !== null) {
         // This is necessary to avoid infinite loops with zero-width matches
         if (flightInfo.index === regex.lastIndex) {
           regex.lastIndex++;
         }
-
-        console.log(flightInfo.groups);
+        console.log(await flight)
+        console.log(await flightInfo.groups);
       }
     });
   };
